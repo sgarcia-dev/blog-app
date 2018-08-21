@@ -2,7 +2,7 @@
 Blog App is a MEN stack (Mongo + Express + Node) application built to serve as an example application on how to build CRUD app from scratch.
 
 ### Phases
-* [01-hello-node](#) (TBD)
+* [01-hello-node](https://github.com/sgarcia-dev/blog-app/tree/01-hello-node)
 * [02-hello-express](#) (TBD)
 * [03-express-crud](#) (TBD)
 * [04-mongoose-crud](#) (TBD)

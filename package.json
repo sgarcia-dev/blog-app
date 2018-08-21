@@ -1,0 +1,26 @@
+{
+  "name": "blog-app",
+  "version": "1.0.0",
+  "description": "Blog App is a MEN stack (Mongo + Express + Node) application built to serve as an example application on how to build CRUD app from scratch.",
+  "main": "./app/start.js",
+  "scripts": {
+    "start": "node ./app/start.js",
+    "dev": "nodemon ./app/start.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sgarcia-dev/blog-app.git"
+  },
+  "keywords": [],
+  "author": "https://github.com/sgarcia-dev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sgarcia-dev/blog-app/issues"
+  },
+  "homepage": "https://github.com/sgarcia-dev/blog-app#readme",
+  "dependencies": {
+    "colors": "^1.3.1",
+    "nodemon": "^1.18.3"
+  }
+}
