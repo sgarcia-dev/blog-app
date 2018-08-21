@@ -35,10 +35,10 @@ module.exports = {
 	app
 };
 
-function startServer() {
+function startServer(mongoConnectionString = MONGO_URL) {
 	return new Promise((resolve, reject) => {
 		logInfo('Starting mongodb connection ...');
-		mongoose.connect(MONGO_URL, { useNewUrlParser: true }, err => {
+		mongoose.connect(mongoConnectionString, { useNewUrlParser: true }, err => {
 			if (err) {
 				return reject(err);
 			} else {
