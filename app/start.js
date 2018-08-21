@@ -1,6 +1,3 @@
-const { logInfo, logWarn, logError, logSuccess } = require('./logger');
+const { startServer } = require('./server');
 
-logInfo('Hello');
-logWarn('world');
-logError('from');
-logSuccess('Node.js!');
+startServer();
