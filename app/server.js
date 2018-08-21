@@ -3,6 +3,7 @@ const morgan = require('morgan');
 
 const { logInfo, logError, logSuccess } = require('./logger.js');
 const { PORT, HTTP_STATUS_CODES } = require('./config.js');
+const { postsRouter } = require('./post.router');
 
 const app = express();
 let expressServer = null;
@@ -11,6 +12,7 @@ let expressServer = null;
 app.use(morgan('[:date[web]] :method :url :status')); // http request logger
 app.use(express.json()); // parses raw json request payloads
 app.use(express.static('./public')); // redirects calls to matching files in ./public folder
+app.use('/api/post', postsRouter); // Prefixes all routes in postsRouter with /api/post 
 
 // Route handling used to test calls against HTTP GET/POST http://localhost:8080/api/echo
 app.get('/api/echo', (request, response) => {
