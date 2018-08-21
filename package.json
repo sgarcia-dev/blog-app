@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./app/start.js",
     "dev": "nodemon ./app/start.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -25,5 +25,11 @@
     "mongoose": "^5.2.9",
     "morgan": "^1.9.0",
     "nodemon": "^1.18.3"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "faker": "^4.1.0",
+    "mocha": "^5.2.0"
   }
 }
