@@ -1,12 +1,14 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const morgan = require('morgan');
 
 const { logInfo, logError, logSuccess } = require('./logger.js');
-const { PORT, HTTP_STATUS_CODES } = require('./config.js');
+const { PORT, MONGO_URL, HTTP_STATUS_CODES } = require('./config.js');
 const { postsRouter } = require('./post.router');
 
 const app = express();
 let expressServer = null;
+mongoose.Promise = global.Promise;
 
 // ### MIDDLEWARE ####
 app.use(morgan('[:date[web]] :method :url :status')); // http request logger
@@ -35,28 +37,39 @@ module.exports = {
 
 function startServer() {
 	return new Promise((resolve, reject) => {
-		logInfo('Starting express server ...');
-		expressServer = app.listen(PORT, () => {
-			logSuccess(`Express server listening on http://localhost:${PORT}`);
-			resolve();
-		}).on('error', err => {
-			logError(err);
-			reject(err);
+		logInfo('Starting mongodb connection ...');
+		mongoose.connect(MONGO_URL, { useNewUrlParser: true }, err => {
+			if (err) {
+				return reject(err);
+			} else {
+				logSuccess('Mongodb connection succesful.');
+				logInfo('Starting express server ...');
+				expressServer = app.listen(PORT, () => {
+					logSuccess(`Express server listening on http://localhost:${PORT}`);
+					resolve();
+				}).on('error', err => {
+					logError(err);
+					mongoose.disconnect();
+					reject(err);
+				});
+			}
 		});
 	});
 }
 
 function closeServer() {
-	return new Promise((resolve, reject) => {
-		logInfo('Stopping express server ...');
-		expressServer.close(err => {
-			if (err) {
-				logError(err);
-				return reject(err);
-			} else {
-				logInfo('Express server stopped.');
-				resolve();
-			}
-		});
-	});
+	return mongoose
+		.disconnect()
+		.then(() => new Promise((resolve, reject) => {
+			logInfo('Stopping express server ...');
+			expressServer.close(err => {
+				if (err) {
+					logError(err);
+					return reject(err);
+				} else {
+					logInfo('Express server stopped.');
+					resolve();
+				}
+			});
+		}));
 }
