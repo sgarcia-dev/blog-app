@@ -7,7 +7,7 @@ Blog App is a MEN stack (Mongo + Express + Node) application built to serve as a
 * [03-express-crud](https://github.com/sgarcia-dev/blog-app/tree/03-express-crud)
 * [04-mongoose-crud](https://github.com/sgarcia-dev/blog-app/tree/04-mongoose-crud)
 * [05-unit-testing](https://github.com/sgarcia-dev/blog-app/tree/05-unit-testing)
-* [06-crud-frontend](#) (TBD)
+* [06-crud-frontend](https://github.com/sgarcia-dev/blog-app/tree/06-crud-frontend)
 * [07-authentication](#) (TBD)
 
 ### Available NPM scripts
