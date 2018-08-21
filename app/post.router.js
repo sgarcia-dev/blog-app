@@ -2,7 +2,7 @@ const express = require('express');
 const postsRouter = express.Router();
 
 const { logInfo, logError, logSuccess, logWarn } = require('./logger.js');
-const { Post } = require('./post.model.temp.js');
+const { Post } = require('./post.model.js');
 const { HTTP_STATUS_CODES } = require('./config.js');
 const { filterObject, checkObjectProperties } = require('./helpers.js');
 
@@ -25,7 +25,7 @@ postsRouter.post('/', (request, response) => {
 		})
 		.then(post => {
 			logSuccess('New Post document created');
-			return response.status(HTTP_STATUS_CODES.CREATED).json(post);
+			return response.status(HTTP_STATUS_CODES.CREATED).json(post.serialize());
 		})
 		.catch(err => {
 			logError(err);
@@ -36,10 +36,10 @@ postsRouter.post('/', (request, response) => {
 // ### Read ###
 postsRouter.get('/', (request, response) => {
 	logInfo('Fetching Post collection ...');
-	Post.get()
+	Post.find()
 		.then(posts => {
 			logSuccess('Post collection fetched succesfully');
-			response.json(posts);
+			response.json(posts.map(post => post.serialize()));
 		}).catch(err => {
 			logError(err);
 			response.status(HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: 'Internal server error' });
@@ -57,10 +57,13 @@ postsRouter.put('/:id', (request, response) => {
 	}
 
 	logInfo('Updating Post document ...');
-	const fieldsToUpdate = filterObject(['title', 'content'], request.body);
+	const fieldsToUpdate = filterObject(['title', 'content', 'author'], request.body);
 
 	Post
-		.update(request.params.id, fieldsToUpdate)
+		.findByIdAndUpdate(
+			request.params.id, 
+			{ $set: fieldsToUpdate },
+			{ new: true })
 		.then(() => {
 			logSuccess('Post document updated succesfully');
 			return response.status(HTTP_STATUS_CODES.NO_CONTENT).end();
@@ -75,7 +78,7 @@ postsRouter.put('/:id', (request, response) => {
 postsRouter.delete('/:id', (request, response) => {
 	logInfo('Deleting Post document ...');
 	Post
-		.delete(request.params.id)
+		.findByIdAndRemove(request.params.id)
 		.then(() => {
 			logSuccess('Deleted Post document succesfully');
 			response.status(HTTP_STATUS_CODES.NO_CONTENT).end();
