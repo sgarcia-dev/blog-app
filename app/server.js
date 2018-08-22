@@ -1,19 +1,26 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const passport = require('passport');
 const morgan = require('morgan');
 
 const { logInfo, logError, logSuccess } = require('./logger.js');
 const { PORT, MONGO_URL, HTTP_STATUS_CODES } = require('./config.js');
+const { localStrategy, jwtStrategy } = require('./authentication.strategy');
 const { postsRouter } = require('./post.router');
+const { userRouter } = require('./user.router');
 
 const app = express();
 let expressServer = null;
 mongoose.Promise = global.Promise;
+passport.use(localStrategy);
+passport.use(jwtStrategy);
 
 // ### MIDDLEWARE ####
 app.use(morgan('[:date[web]] :method :url :status')); // http request logger
 app.use(express.json()); // parses raw json request payloads
 app.use(express.static('./public')); // redirects calls to matching files in ./public folder
+app.use('/api/user', userRouter);
 app.use('/api/post', postsRouter); // Prefixes all routes in postsRouter with /api/post 
 
 // Route handling used to test calls against HTTP GET/POST http://localhost:8080/api/echo

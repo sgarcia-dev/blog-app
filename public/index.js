@@ -1,6 +1,9 @@
 $(document).ready(onReady);
 
+let username, jwtToken;
+
 function onReady() {
+	checkAuthentication();
 	$.getJSON('api/post', renderPosts);
 	$('#post-list').on('click', '#delete-post-btn', onPostDeleteBtnClick);
 	$('#post-list').on('click', '#post-summary', onPostClick);
@@ -11,12 +14,16 @@ function renderPosts(posts) {
 }
 
 function postToHtml(post) {
+	let deleteButton = '';
+	if (post.author === username) {
+		deleteButton = '<button id="delete-post-btn">Delete</button>';
+	}
 	return `
 	<div id="post-summary" data-post-id="${post.id}">
 		<b>author:</b> ${post.author}<br/>
 		<b>title:</b> ${post.title}<br/>
 		<b>created:</b> ${new Date(post.created).toLocaleString()}<br/>
-		<button id="delete-post-btn">Delete</button>
+		${deleteButton}
 	</div>
     `;
 }
@@ -52,5 +59,16 @@ function onPostDeleteBtnClick(event) {
 				$.getJSON('api/post', renderPosts);
 			}
 		});
+	}
+}
+
+function checkAuthentication() {
+	jwtToken = localStorage.getItem('jwtToken');
+	if (jwtToken) {
+		username = localStorage.getItem('username');
+		$('#nav-welcome').html(`Welcome ${username}`).removeAttr('hidden');
+		$('#nav-create').removeAttr('hidden');
+	} else {
+		$('#nav-login').removeAttr('hidden');
 	}
 }

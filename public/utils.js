@@ -16,6 +16,9 @@ function ajax(options) {
 		contentType: 'application/json',
 		dataType: 'json',
 		data: JSON.stringify(options.data),
+		beforeSend: function (xhr) {
+			xhr.setRequestHeader('Authorization', `Bearer ${options.jwtToken}`);
+		},
 		success: options.callback,
 		error: err => {
 			alert('Internal Server Error (see console)');

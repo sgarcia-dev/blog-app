@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const postsRouter = express.Router();
 
 const { logInfo, logError, logSuccess, logWarn } = require('./logger.js');
@@ -6,10 +7,12 @@ const { Post } = require('./post.model.js');
 const { HTTP_STATUS_CODES } = require('./config.js');
 const { filterObject, checkObjectProperties } = require('./helpers.js');
 
+const jwtPassportMiddleware = passport.authenticate('jwt', { session: false });
+
 // ### Create ###
-postsRouter.post('/', (request, response) => {
+postsRouter.post('/', jwtPassportMiddleware, (request, response) => {
 	// Checks for required fields inside request body. If any are missing, responds with an error.
-	const fieldsNotFound = checkObjectProperties(['title', 'content', 'author'], request.body);
+	const fieldsNotFound = checkObjectProperties(['title', 'content'], request.body);
 	if (fieldsNotFound.length > 0) {
 		const errorMessage = `Bad Request: Missing the following fields from the request body: ${fieldsNotFound.join(', ')}`;
 		logError(errorMessage);
@@ -21,7 +24,7 @@ postsRouter.post('/', (request, response) => {
 		.create({
 			title: request.body.title,
 			content: request.body.content,
-			author: request.body.author
+			author: request.user.username // request.user comes from the jwtPassportMiddleware. See authentication.strategy.js
 		})
 		.then(post => {
 			logSuccess('New Post document created');
@@ -47,17 +50,17 @@ postsRouter.get('/', (request, response) => {
 });
 
 // ### Update ###
-postsRouter.put('/:id', (request, response) => {
+postsRouter.put('/:id', jwtPassportMiddleware, (request, response) => {
 	// Checks for required fields inside request body. If any are missing, responds with an error.
-	const fieldsNotFound = checkObjectProperties(['title', 'content', 'author'], request.body);
-	if (fieldsNotFound.length > 2) {
+	const fieldsNotFound = checkObjectProperties(['title', 'content'], request.body);
+	if (fieldsNotFound.length > 1) {
 		const errorMessage = `Bad Request: Missing the following fields from the request body: ${fieldsNotFound.join(', ')}`;
 		logError(errorMessage);
 		return response.status(HTTP_STATUS_CODES.BAD_REQUEST).json({ error: errorMessage });
 	}
 
 	logInfo('Updating Post document ...');
-	const fieldsToUpdate = filterObject(['title', 'content', 'author'], request.body);
+	const fieldsToUpdate = filterObject(['title', 'content'], request.body);
 
 	Post
 		.findByIdAndUpdate(
@@ -75,7 +78,7 @@ postsRouter.put('/:id', (request, response) => {
 });
 
 // ### Delete ###
-postsRouter.delete('/:id', (request, response) => {
+postsRouter.delete('/:id', jwtPassportMiddleware, (request, response) => {
 	logInfo('Deleting Post document ...');
 	Post
 		.findByIdAndRemove(request.params.id)

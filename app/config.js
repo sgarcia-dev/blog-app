@@ -9,6 +9,9 @@ module.exports = {
 		BAD_REQUEST: 400,
 		UNAUTHORIZED: 401,
 		NOT_FOUND: 404,
+		UNPROCESSABLE_ENTITY: 422,
 		INTERNAL_SERVER_ERROR: 500,
-	}
+	},
+	JWT_SECRET: process.env.JWT_SECRET,
+	JWT_EXPIRY: process.env.JWT_EXPIRY || '7d'
 };

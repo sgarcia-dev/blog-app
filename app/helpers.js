@@ -3,7 +3,9 @@
 
 module.exports = {
 	filterObject,
-	checkObjectProperties
+	checkObjectProperties,
+	newUsernameValid,
+	newPasswordValid
 };
 
 /**
@@ -41,4 +43,40 @@ function checkObjectProperties(propertiesToCheck, objectToCheck) {
 		}
 	});
 	return propertiesNotFound;
+}
+
+function newUsernameValid(username) {
+	const MIN = 5;
+	const MAX = 25;
+	const validation = {
+		isValid: true,
+		reason: ''
+	};
+
+	if (username.trim() !== username) {
+		validation.isValid = false;
+		validation.reason = 'ValidationError: Username must have no trailing spaces';
+	} else if (!(username.length >= MIN && username.length <= MAX)) {
+		validation.isValid = false;
+		validation.reason = `ValidationError: Username must be between ${MIN} and ${MAX} characters long.`;
+	}
+	return validation;
+}
+
+function newPasswordValid(password) {
+	const MIN = 8;
+	const MAX = 30;
+	const validation = {
+		isValid: true,
+		reason: ''
+	};
+
+	if (password.trim() !== password) {
+		validation.isValid = false;
+		validation.reason = 'ValidationError: Username must have no trailing spaces';
+	} else if (!(password.length >= MIN && password.length <= MAX)) {
+		validation.isValid = false;
+		validation.reason = `ValidationError: Username must be between ${MIN} and ${MAX} characters long.`;
+	}
+	return validation;
 }
